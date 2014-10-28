@@ -1,44 +1,72 @@
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th></th>
-            <th>File Name</th>
-            <th>Date Created</th>
-            <th>Last Modified</th>
-            <th>Share</th>
-            <th>Download</th>
-            <th>Delete</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr ng-repeat="file in files">
-            <td>
-                <i class="icon" ng-class="{'ion-document': file.type == 'file', 'ion-ios7-folder': file.type == 'folder'}"></i>
-            </td>
-            <td>
-                {{ file.name }}
-            </td>
-            <td>
-                {{ file.dateCreated | date:'medium' }}
-            </td>
-            <td>
-                {{ file.lastModified | date:'medium' }}
-            </td>
-            <td>
-                <span ng-if="file.type == 'file'" ng-click="share(file)" class="fake-link">
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <button data-toggle="modal" data-target="#uploadFileModal" class="btn btn-primary">
+            Upload file
+        </button>
+        <button class="btn btn-primary">
+            Create folder
+        </button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>File Name</th>
+                    <th>Date Created</th>
+                    <th>Last Modified</th>
+                    <th>Share</th>
+                    <th>Download</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="file in files">
+                    <td>
+                        <i class="icon" ng-class="{'ion-document': file.type == 'file', 'ion-ios7-folder': file.type == 'folder'}"></i>
+                    </td>
+                    <td>
+                        {{ file.name }}
+                    </td>
+                    <td>
+                        {{ file.dateCreated | date:'medium' }}
+                    </td>
+                    <td>
+                        {{ file.lastModified | date:'medium' }}
+                    </td>
+                    <td>
+                        <span ng-if="file.type == 'file'" ng-click="share(file)" class="fake-link">
                     Share
                 </span>
-            </td>
-            <td>
-                <a ng-if="file.type == 'file'" target="_self" ng-href="/download/{{ file._id }}" download="{{ file.name }}">
+                    </td>
+                    <td>
+                        <a ng-if="file.type == 'file'" target="_self" ng-href="/download/{{ file._id }}" download="{{ file.name }}">
                     Download
                 </a>
-            </td>
-            <td>
-                <span ng-click="delete(file)" class="fake-link">
+                    </td>
+                    <td>
+                        <span ng-click="delete(file)" class="fake-link">
                     Delete
                 </span>
-            </td>
-        </tr>
-    </tbody>
-</table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="modal fade" id="uploadFileModal" tabindex="-1" role="dialog" aria-labelledby="uploadFileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="uploadFileModalLabel">Upload File</h4>
+            </div>
+            <div class="modal-body">
+                
+            </div>
+        </div>
+    </div>
+</div>

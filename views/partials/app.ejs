@@ -21,15 +21,19 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="/">File Browser</a>
-                    </li>
-                    <li>
-                        <a href="/settings">Settings</a>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <%= user.firstName %> <%= user.lastName %> <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="/logout" ng-click="$event.stopPropagation()">
+                                    <i class="icon ion-log-out"></i> Log out
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
-                <form class="navbar-form navbar-right">
-                    <input type="text" class="form-control" placeholder="Search...">
-                </form>
             </div>
         </div>
     </div>
@@ -85,35 +89,24 @@
 
         });
 
-        app.controller('FileBrowserCtrl', function ($scope) {
-            $scope.files = [{
-                _id: 123,
-                type: 'file',
-                name: 'testfile.html',
-                dateCreated: new Date(),
-                lastModified: new Date()
-            }, {
-                _id: 456,
-                type: 'folder',
-                name: 'Images',
-                dateCreated: new Date(),
-                lastModified: new Date()
-            }, {
-                _id: 789,
-                type: 'file',
-                name: 'app.js',
-                dateCreated: new Date(),
-                lastModified: new Date()
-            }];
-            
+        app.controller('FileBrowserCtrl', function ($scope, $http) {
+            $scope.files = [];
+            $http.get('/api/files')
+                .success(function (data) {
+                    $scope.files = data;
+                })
+                .error(function (data) {
+
+                });
+
             $scope.share = function (file) {
-                
+
             };
-            
+
             $scope.delete = function (file) {
-                
+
             };
-            
+
         });
 
         app.controller('SettingsCtrl', function ($scope) {
