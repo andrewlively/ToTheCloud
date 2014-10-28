@@ -1,0 +1,44 @@
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th></th>
+            <th>File Name</th>
+            <th>Date Created</th>
+            <th>Last Modified</th>
+            <th>Share</th>
+            <th>Download</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="file in files">
+            <td>
+                <i class="icon" ng-class="{'ion-document': file.type == 'file', 'ion-ios7-folder': file.type == 'folder'}"></i>
+            </td>
+            <td>
+                {{ file.name }}
+            </td>
+            <td>
+                {{ file.dateCreated | date:'medium' }}
+            </td>
+            <td>
+                {{ file.lastModified | date:'medium' }}
+            </td>
+            <td>
+                <span ng-if="file.type == 'file'" ng-click="share(file)" class="fake-link">
+                    Share
+                </span>
+            </td>
+            <td>
+                <a ng-if="file.type == 'file'" target="_self" ng-href="/download/{{ file._id }}" download="{{ file.name }}">
+                    Download
+                </a>
+            </td>
+            <td>
+                <span ng-click="delete(file)" class="fake-link">
+                    Delete
+                </span>
+            </td>
+        </tr>
+    </tbody>
+</table>

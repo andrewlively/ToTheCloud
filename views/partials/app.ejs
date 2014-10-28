@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="cloudApp">
+
+<head>
+    <% include ../head %>
+        <link rel="stylesheet" href="http://getbootstrap.com/examples/dashboard/dashboard.css">
+        <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
+</head>
+
+<body class="container" ng-controller="BaseCtrl">
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Cloud</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/">File Browser</a>
+                    </li>
+                    <li>
+                        <a href="/settings">Settings</a>
+                    </li>
+                </ul>
+                <form class="navbar-form navbar-right">
+                    <input type="text" class="form-control" placeholder="Search...">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3 col-md-2 sidebar">
+                <ul class="nav nav-sidebar">
+                    <li ng-class="{'active': currentPage == 'fileBrowser'}">
+                        <a href="/">File Browser</a>
+                    </li>
+                    <li ng-class="{'active': currentPage == 'settings'}">
+                        <a href="/settings">Settings</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-10 col-sm-offset-2 col-md-11 col-md-offset-1 main">
+                <div ui-view></div>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.11/angular-ui-router.min.js"></script>
+    <script>
+        var app = angular.module('cloudApp', ['ui.router']);
+
+        app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
+            //
+            // Now set up the states
+            $stateProvider
+                .state('fileBrowser', {
+                    url: '/',
+                    templateUrl: 'partials/fileBrowser.html',
+                    controller: 'FileBrowserCtrl'
+                })
+                .state('settings', {
+                    url: '/settings',
+                    templateUrl: 'partials/settings.html',
+                    controller: 'SettingsCtrl'
+                });
+
+            $locationProvider.html5Mode(true)
+            $urlRouterProvider.otherwise('/');
+        });
+
+        app.controller('BaseCtrl', function ($scope, $rootScope) {
+            $scope.currentPage = 'fileBrowser';
+
+            $rootScope.$on('$stateChangeStart',
+                function (event, toState, toParams, fromState, fromParams) {
+                    $scope.currentPage = toState.name;
+                });
+
+        });
+
+        app.controller('FileBrowserCtrl', function ($scope) {
+            $scope.files = [{
+                _id: 123,
+                type: 'file',
+                name: 'testfile.html',
+                dateCreated: new Date(),
+                lastModified: new Date()
+            }, {
+                _id: 456,
+                type: 'folder',
+                name: 'Images',
+                dateCreated: new Date(),
+                lastModified: new Date()
+            }, {
+                _id: 789,
+                type: 'file',
+                name: 'app.js',
+                dateCreated: new Date(),
+                lastModified: new Date()
+            }];
+            
+            $scope.share = function (file) {
+                
+            };
+            
+            $scope.delete = function (file) {
+                
+            };
+            
+        });
+
+        app.controller('SettingsCtrl', function ($scope) {
+
+        });
+    </script>
+</body>
+
+</html>
