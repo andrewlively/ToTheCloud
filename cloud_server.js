@@ -31,12 +31,6 @@ app.use(multer({ dest: './uploads/'}));
 app.use(cookieParser()); // read cookies (needed for auth)
 // required for passport
 app.use(session({
-    secret: 'ilovescotchscotchyscotchscotch',
-    resave: true,
-    saveUninitialized: true
-})); // session secret
-
-app.use(session({
     store: new RedisStore(),
     secret: '^[(R5ejCl3T5=81%6p+J)4~UB})@Gs"MoM?25=51H%8~c!lio$_J]n4^}*08z',
     resave: true,

@@ -1,4 +1,4 @@
-/*global angular */
+/*global angular, _ */
 var app = angular.module('cloudApp', ['ui.router']);
 
 app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
@@ -32,10 +32,13 @@ app.controller('BaseCtrl', function ($scope, $rootScope) {
 
 app.controller('EntityBrowserCtrl', function ($scope, $http) {
     $scope.entities = [];
-    $scope.path = '/';
+    $scope.path = '';
+    $scope.currentDirectory = null;
+    $scope.directories = [];
 
     $scope.newFolder = {
-        name: ''
+        name: '',
+        parent: null
     };
 
     $scope.newFileDump = {
@@ -45,20 +48,6 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
         requiresAccount: false
     };
 
-    $http({
-        url: '/api/entities',
-        method: "GET",
-        params: {
-            path: $scope.path
-        }
-    })
-        .success(function (data) {
-            $scope.entities = data;
-        })
-        .error(function (data) {
-
-        });
-
     $scope.share = function (entity) {
 
     };
@@ -66,15 +55,34 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
     $scope.delete = function (entity) {
 
     };
-    
+
     $scope.openFolder = function (entity) {
         if (entity.type === 'folder') {
-            console.log(entity);
+            $scope.directories.push(entity);
+            $scope.currentDirectory = entity;
+            getEntitiesForParent(entity._id);
+            $scope.path += ($scope.path.length === 0 ? '' : '/') + entity.name;
+        }
+    };
+    
+    $scope.goUpDirectory = function () {
+        $scope.directories.pop();
+        if ($scope.directories.length > 0) {
+            $scope.currentDirectory = _.last($scope.directories);
+            getEntitiesForParent($scope.currentDirectory._id);
+            var paths = $scope.path.split('/');
+            paths.pop();
+            $scope.path = paths.join('/');
+        } else {
+            $scope.currentDirectory = null;
+            $scope.path = '';
+            getEntitiesForParent(null);
         }
     };
 
     $scope.resetNewFolder = function () {
         $scope.newFolder.name = '';
+        $scope.newFolder.parent = $scope.currentDirectory._id || null;
     };
 
     $scope.resetNewFileDump = function () {
@@ -96,6 +104,24 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
             });
 
     };
+
+    function getEntitiesForParent(parent) {
+        $http({
+            url: '/api/entities',
+            method: 'GET',
+            params: {
+                parent: parent
+            }
+        })
+            .success(function (data) {
+                $scope.entities = data;
+            })
+            .error(function (data) {
+
+            });
+    }
+    
+    getEntitiesForParent(null);
 
 });
 

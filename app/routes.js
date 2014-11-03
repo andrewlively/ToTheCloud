@@ -11,7 +11,7 @@ module.exports = function (app, passport) {
     app.get('/api/entities', isLoggedIn, function (req, res) {
         EntityBrowser.getEntitiesForLevel({
             owner: req.user._id,
-            parent: null
+            parent: req.query.parent
         }, function (err, entities) {
             res.status(err ? 422 : 200).json(entities).end();
         });
@@ -28,17 +28,18 @@ module.exports = function (app, passport) {
     });
     
     app.post('/api/folder/new', isLoggedIn, function (req, res) {
-        EntityBrowser.createNewFolderEntity({
-            folder: req.body.folder,
-            user: req.user._id,
-            parent: req.body.parent
-        }, function (err, newFolder) {
-            console.log(err);
-            res.status(err ? 422 : 200).json({
-                status: err ? 'ERROR' : 'SUCCESS',
-                newFolder: newFolder
-            }).end();
-        });
+        console.log(req.body);
+//        EntityBrowser.createNewFolderEntity({
+//            folder: req.body.folder,
+//            user: req.user._id,
+//            parent: req.body.parent
+//        }, function (err, newFolder) {
+//            console.log(err);
+//            res.status(err ? 422 : 200).json({
+//                status: err ? 'ERROR' : 'SUCCESS',
+//                newFolder: newFolder
+//            }).end();
+//        });
     });
 
     // frontend routes =========================================================
