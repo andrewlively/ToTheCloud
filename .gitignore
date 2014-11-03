@@ -3,6 +3,11 @@
 logs
 *.log
 
+# Uploads
+uploads/*
+
+app/files/*
+
 # Runtime data
 pids
 *.pid
