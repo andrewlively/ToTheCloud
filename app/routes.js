@@ -1,81 +1,87 @@
- // app/routes.js
+/*global module, require, console, __dirname */
+module.exports = function (app, passport) {
+    var fs = require('fs');
+    var uuid = require('uuid');
+    var EntityBrowser = require('./modules/EntityBrowser/entitybrowser');
 
+    // server routes ===========================================================
+    // handle things like api calls
+    // authentication routes
 
- module.exports = function (app, passport) {
+    app.get('/api/entities', isLoggedIn, function (req, res) {
+        EntityBrowser.getEntitiesForLevel({
+            owner: req.user._id,
+            parent: null
+        }, function (err, entities) {
+            res.status(err ? 422 : 200).json(entities).end();
+        });
+    });
 
-     // server routes ===========================================================
-     // handle things like api calls
-     // authentication routes
+    app.post('/api/file/new', isLoggedIn, function (req, res) {
+        EntityBrowser.createNewFileEntity({
+            file: req.files.upload,
+            user: req.user._id,
+            parent: req.body.parent
+        }, function (err) {
+            res.redirect('/');
+        });
+    });
+    
+    app.post('/api/folder/new', isLoggedIn, function (req, res) {
+        EntityBrowser.createNewFolderEntity({
+            folder: req.body.folder,
+            user: req.user._id,
+            parent: req.body.parent
+        }, function (err, newFolder) {
+            console.log(err);
+            res.status(err ? 422 : 200).json({
+                status: err ? 'ERROR' : 'SUCCESS',
+                newFolder: newFolder
+            }).end();
+        });
+    });
 
-     app.get('/api/files', isLoggedIn, function (req, res) {
-         res.status(200).json([{
-             _id: 123,
-             type: 'file',
-             name: 'testfile.html',
-             dateCreated: new Date(),
-             lastModified: new Date()
-         }, {
-             _id: 456,
-             type: 'folder',
-             name: 'Images',
-             dateCreated: new Date(),
-             lastModified: new Date()
-         }, {
-             _id: 789,
-             type: 'file',
-             name: 'app.js',
-             dateCreated: new Date(),
-             lastModified: new Date()
-         }]).end();
-     });
-     
-     app.post('/api/upload', isLoggedIn, function (req, res) {
-         console.log(req);
-     });
+    // frontend routes =========================================================
 
-     // frontend routes =========================================================
+    app.get('/download/:entityId', isLoggedIn, function (req, res) {
+        res.status(200).sendFile(require('path').join(__dirname + '/files/' + req.user._id + '/' + req.params.entityId));
+    });
 
-     app.get('/download/:fileId', isLoggedIn, function (req, res) {
-         console.log(req.params.fileId);
-         // TODO: Find file
-         res.status(200).sendFile(require('path').join(__dirname + '/../views/head.ejs'));
-     });
+    app.post('/login', passport.authenticate('local-login', {
+        successRedirect: '/', // redirect to the secure profile section
+        failureRedirect: '/', // redirect back to the signup page if there is an error
+        failureFlash: true // allow flash messages
+    }));
 
-     app.post('/login', passport.authenticate('local-login', {
-         successRedirect: '/', // redirect to the secure profile section
-         failureRedirect: '/', // redirect back to the signup page if there is an error
-         failureFlash: true // allow flash messages
-     }));
+    app.get('/logout', function (req, res) {
+        req.logout();
+        res.redirect('/');
+    });
 
-     app.get('/logout', function (req, res) {
-         req.logout();
-         res.redirect('/');
-     });
+    // route to handle all angular requests
+    app.get('/', function (req, res) {
+        if (req.isAuthenticated()) {
+            res.render('partials/app', {
+                user: req.user
+            });
+        } else {
+            res.render('partials/login', {
+                loginMessage: req.flash('loginMessage')
+            });
+        }
+    });
 
-     // route to handle all angular requests
-     app.get('/', function (req, res) {
-         if (req.isAuthenticated()) {
-             res.render('partials/app', {
-                 user: req.user
-             });
-         } else {
-             res.render('partials/login', {
-                 loginMessage: req.flash('loginMessage')
-             });
-         }
-     });
+    app.get('*', function (req, res) {
+        res.redirect('/');
+    });
+};
 
-     app.get('*', function (req, res) {
-         res.redirect('/');
-     });
- };
+function isLoggedIn(req, res, next) {
 
- function isLoggedIn(req, res, next) {
+    // if user is authenticated in the session, carry on 
+    if (req.isAuthenticated())
+        return next();
 
-     // if user is authenticated in the session, carry on 
-     if (req.isAuthenticated())
-         return next();
-
-     // if they aren't redirect them to the home page
-     res.redirect('/');
- }
+    // if they aren't redirect them to the home page
+    res.redirect('/');
+}

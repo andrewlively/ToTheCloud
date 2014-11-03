@@ -5,6 +5,7 @@
     <% include ../head %>
         <link rel="stylesheet" href="http://getbootstrap.com/examples/dashboard/dashboard.css">
         <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
+        <link rel="stylesheet" href="/css/entitybrowser.css">
 </head>
 
 <body class="container" ng-controller="BaseCtrl">
@@ -42,7 +43,7 @@
         <div class="row">
             <div class="col-sm-3 col-md-2 sidebar">
                 <ul class="nav nav-sidebar">
-                    <li ng-class="{'active': currentPage == 'fileBrowser'}">
+                    <li ng-class="{'active': currentPage == 'entityBrowser'}">
                         <a href="/">File Browser</a>
                     </li>
                     <li ng-class="{'active': currentPage == 'settings'}">
@@ -57,62 +58,7 @@
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.11/angular-ui-router.min.js"></script>
-    <script>
-        var app = angular.module('cloudApp', ['ui.router']);
-
-        app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
-            //
-            // Now set up the states
-            $stateProvider
-                .state('fileBrowser', {
-                    url: '/',
-                    templateUrl: 'partials/fileBrowser.html',
-                    controller: 'FileBrowserCtrl'
-                })
-                .state('settings', {
-                    url: '/settings',
-                    templateUrl: 'partials/settings.html',
-                    controller: 'SettingsCtrl'
-                });
-
-            $locationProvider.html5Mode(true)
-            $urlRouterProvider.otherwise('/');
-        });
-
-        app.controller('BaseCtrl', function ($scope, $rootScope) {
-            $scope.currentPage = 'fileBrowser';
-
-            $rootScope.$on('$stateChangeStart',
-                function (event, toState, toParams, fromState, fromParams) {
-                    $scope.currentPage = toState.name;
-                });
-
-        });
-
-        app.controller('FileBrowserCtrl', function ($scope, $http) {
-            $scope.files = [];
-            $http.get('/api/files')
-                .success(function (data) {
-                    $scope.files = data;
-                })
-                .error(function (data) {
-
-                });
-
-            $scope.share = function (file) {
-
-            };
-
-            $scope.delete = function (file) {
-
-            };
-
-        });
-
-        app.controller('SettingsCtrl', function ($scope) {
-
-        });
-    </script>
+    <script src="/js/app.js"></script>
 </body>
 
 </html>

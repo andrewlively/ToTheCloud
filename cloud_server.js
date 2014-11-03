@@ -6,10 +6,12 @@ var app = express();
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var cookieParser = require('cookie-parser');
-var session      = require('express-session');
+var session = require('express-session');
+var RedisStore = require('connect-redis')(session);
 var passport = require('passport');
 var mongoose = require('mongoose');
 var flash = require('connect-flash');
+var multer  = require('multer');
 
 // configuration ===========================================
 
@@ -25,7 +27,7 @@ var port = process.env.PORT || 1337;
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
-
+app.use(multer({ dest: './uploads/'}));
 app.use(cookieParser()); // read cookies (needed for auth)
 // required for passport
 app.use(session({
@@ -33,6 +35,13 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 })); // session secret
+
+app.use(session({
+    store: new RedisStore(),
+    secret: '^[(R5ejCl3T5=81%6p+J)4~UB})@Gs"MoM?25=51H%8~c!lio$_J]n4^}*08z',
+    resave: true,
+    saveUninitialized: true
+}));
 
 require('./config/passport')(passport);
 app.use(passport.initialize());

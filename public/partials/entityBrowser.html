@@ -1,0 +1,133 @@
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <button data-toggle="modal" data-target="#uploadFileModal" class="btn btn-primary">
+            Upload File
+        </button>
+        <button data-toggle="modal" ng-click="resetNewFolder()" data-target="#createFolderModal" class="btn btn-primary">
+            Create Folder
+        </button>
+        <button data-toggle="modal" ng-click="resetNewFileDump()" data-target="#createFileDumpModal" class="btn btn-primary">
+            Create File Dump
+        </button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>File Name</th>
+                    <th>Date Created</th>
+                    <th>Last Modified</th>
+                    <th>Size</th>
+                    <th>Share</th>
+                    <th>Download</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="entity in entities">
+                    <td>
+                        <i class="icon" ng-class="{'ion-document': entity.type == 'file', 'ion-ios7-folder': entity.type == 'folder'}"></i>
+                    </td>
+                    <td>
+                        <span ng-class="{'fake-link': entity.type == 'folder'}" ng-click="openFolder(entity)">
+                            {{ entity.name }}
+                        </span>
+                    </td>
+                    <td>
+                        {{ entity.date_added | date:'medium' }}
+                    </td>
+                    <td>
+                        {{ entity.last_modified | date:'medium' }}
+                    </td>
+                    <td>
+                        {{ entity.size }}
+                    </td>
+                    <td>
+                        <span ng-if="entity.type == 'file'" ng-click="share(entity)" class="fake-link">
+                            Share
+                        </span>
+                    </td>
+                    <td>
+                        <a ng-if="entity.type == 'file'" target="_self" ng-href="/download/{{ entity.key }}" download="{{ entity.name }}">
+                            Download
+                        </a>
+                    </td>
+                    <td>
+                        <span ng-click="delete(entity)" class="fake-link">
+                            Delete
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="modal fade" id="uploadFileModal" tabindex="-1" role="dialog" aria-labelledby="uploadFileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="uploadFileModalLabel">Upload File</h4>
+            </div>
+            <div class="modal-body">
+                <form action="/api/file/new" method="post" enctype="multipart/form-data" class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="newFileUpload" class="col-sm-3 control-label">File:</label>
+                        <div class="col-sm-9">
+                            <span class="btn btn-primary btn-file">
+                                Browse... <input name="upload" type="file" id="newFileUpload" required>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Upload" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="createFolderModal" tabindex="-1" role="dialog" aria-labelledby="createFolderModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="createFolderModalLabel">Create Folder</h4>
+            </div>
+            <div class="modal-body">
+                <form ng-submit="createNewFolder()" class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="newFolderName" class="col-sm-3 control-label">Folder name:</label>
+                        <div class="col-sm-9">
+                            <input type="text" ng-model="newFolder.name" class="form-control" id="newFolderName" placeholder="Name">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Create" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="createFileDumpModal" tabindex="-1" role="dialog" aria-labelledby="createFileDumpModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="createFileDumpModalLabel">Create File Dump</h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+        </div>
+    </div>
+</div>
