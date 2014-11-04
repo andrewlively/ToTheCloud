@@ -12,13 +12,13 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-sm-12 col-md 12">
-        Path: /{{ path }}
+    <div class="col-sm-1 col-md 1">
+        <div style="cursor: pointer" ng-show="path.length > 0" ng-click="goUpDirectory()">
+            Up <i ng-disabled="path.length === 0" class="icon ion-arrow-up-a"></i>
+        </div>
     </div>
-</div>
-<div class="row">
-    <div ng-click="goUpDirectory()" class="col-sm-1 col-md 1">
-        <i ng-disabled="path.length === 0" class="icon ion-arrow-up-a"></i>
+    <div class="col-sm-11 col-md 11">
+        Path: /{{ path }}
     </div>
 </div>
 <div class="row">

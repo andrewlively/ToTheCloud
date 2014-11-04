@@ -1,6 +1,6 @@
 /*global require, exports, __dirname */
 var Entity = require('../../models/entity');
-var fs = require('fs');
+var fs = require('fs-extra');
 var uuid = require('uuid');
 var async = require('async');
 
@@ -19,15 +19,10 @@ exports.createNewFileEntity = function (data, callback) {
 
             function (callback) {
                 // Read the file
-                fs.readFile(data.file.path, function (err, data) {
-                    callback(err, data);
-                });
-            },
-            function (fileData, callback) {
-                // Write the file to the new path and remove from tmp directory
                 var newKey = uuid.v4();
                 var newPath = __dirname + '/../../files/' + data.user + '/' + newKey;
-                fs.writeFile(newPath, fileData, function (err) {
+                
+                fs.move(data.file.path, newPath, function (err) {
                     callback(err, newKey);
                 });
             },
@@ -63,7 +58,6 @@ exports.createNewFolderEntity = function (data, callback) {
             last_modified: new Date()
         }).save(callback);
     } catch (ex) {
-        console.log(ex);
         callback('Unknown error');
     }
 };

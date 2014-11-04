@@ -37,8 +37,7 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
     $scope.directories = [];
 
     $scope.newFolder = {
-        name: '',
-        parent: null
+        name: ''
     };
 
     $scope.newFileDump = {
@@ -82,7 +81,6 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
 
     $scope.resetNewFolder = function () {
         $scope.newFolder.name = '';
-        $scope.newFolder.parent = $scope.currentDirectory._id || null;
     };
 
     $scope.resetNewFileDump = function () {
@@ -93,8 +91,15 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
     };
 
     $scope.createNewFolder = function () {
+        var parent = null;
+        
+        if ($scope.currentDirectory) {
+            parent = $scope.currentDirectory._id;
+        }
+        
         $http.post('/api/folder/new', {
-            folder: $scope.newFolder
+            folder: $scope.newFolder,
+            parent: parent
         })
             .success(function (d) {
                 $scope.entities.push(d.newFolder);

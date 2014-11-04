@@ -26,20 +26,18 @@ module.exports = function (app, passport) {
             res.redirect('/');
         });
     });
-    
+
     app.post('/api/folder/new', isLoggedIn, function (req, res) {
-        console.log(req.body);
-//        EntityBrowser.createNewFolderEntity({
-//            folder: req.body.folder,
-//            user: req.user._id,
-//            parent: req.body.parent
-//        }, function (err, newFolder) {
-//            console.log(err);
-//            res.status(err ? 422 : 200).json({
-//                status: err ? 'ERROR' : 'SUCCESS',
-//                newFolder: newFolder
-//            }).end();
-//        });
+        EntityBrowser.createNewFolderEntity({
+            folder: req.body.folder,
+            user: req.user._id,
+            parent: req.body.parent
+        }, function (err, newFolder) {
+            res.status(err ? 422 : 200).json({
+                status: err ? 'ERROR' : 'SUCCESS',
+                newFolder: newFolder
+            }).end();
+        });
     });
 
     // frontend routes =========================================================
