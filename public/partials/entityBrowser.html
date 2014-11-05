@@ -42,7 +42,7 @@
                         <i class="icon" ng-class="{'ion-document': entity.type == 'file', 'ion-ios7-folder': entity.type == 'folder'}"></i>
                     </td>
                     <td>
-                        <span ng-class="{'fake-link': entity.type == 'folder'}" ng-click="openFolder(entity)">
+                        <span class="fake-link" ng-click="open(entity)">
                             {{ entity.name }}
                         </span>
                     </td>
@@ -140,6 +140,20 @@
             </div>
             <div class="modal-body">
 
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="filePreviewModal" tabindex="-1" role="dialog" aria-labelledby="filePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="filePreviewModalLabel">{{ filePreview.name }}</h4>
+            </div>
+            <div class="modal-body" style="text-align: center">
+                <img class="image-preview" ng-if="filePreview.type == 'image'" ng-src="{{ filePreview.url }}" alt="{{ filePreview.name }}">
             </div>
         </div>
     </div>

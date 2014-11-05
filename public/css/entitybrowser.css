@@ -26,3 +26,8 @@
     text-decoration: underline;
     cursor: pointer;
 }
+.image-preview {
+    width: 75%;
+    height: auto;
+    margin: auto;
+}

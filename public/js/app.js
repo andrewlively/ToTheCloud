@@ -35,6 +35,12 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
     $scope.path = '';
     $scope.currentDirectory = null;
     $scope.directories = [];
+    
+    $scope.filePreview = {
+        name: '',
+        url: '',
+        type: ''
+    };
 
     $scope.newFolder = {
         name: ''
@@ -78,12 +84,34 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
         }
     };
 
-    $scope.openFolder = function (entity) {
+    $scope.open = function (entity) {
         if (entity.type === 'folder') {
             $scope.directories.push(entity);
             $scope.currentDirectory = entity;
             getEntitiesForParent(entity._id);
             $scope.path += ($scope.path.length === 0 ? '' : '/') + entity.name;
+        } else if (entity.type === 'file') {
+            var fileType = entity.name.slice(entity.name.lastIndexOf('.') + 1).toLocaleLowerCase();
+            var imageTypes = ['jpg', 'jpeg', 'png', 'gif', 'mpb'];
+            var movieTypes = ['mp4', 'mov', 'flv'];
+            var audioTypes = ['mp3'];
+            var docTypes = ['doc', 'docx', 'txt'];
+            
+            if (imageTypes.indexOf(fileType) > -1) {
+                $scope.filePreview.type = 'image';
+            } else if (movieTypes.indexOf(fileType)) {
+                $scope.filePreview.type = 'movie';
+            } else if (audioTypes.indexOf(fileType)) {
+                $scope.filePreview.type = 'audio';
+            } else if (docTypes.indexOf(fileType)) {
+                $scope.filePreview.type = 'doc';
+            }
+            
+            $scope.filePreview.name = entity.name;
+            $scope.filePreview.url = '/download/' + entity.key;
+            
+            jQuery('#filePreviewModal').modal('show');
+            
         }
     };
 
