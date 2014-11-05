@@ -52,20 +52,30 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
     };
 
     $scope.delete = function (entity) {
-        $http.post('/api/file/delete', {
-            file: entity.key
-        })
-            .success(function (data) {
-                // Remove the file from the view
-                $scope.entities = $scope.entities.filter(function (obj) {
-                    return obj._id !== entity._id;
-                });
+        var url = null;
+
+        if (entity.type === 'file') {
+            url = '/api/file/delete';
+        } else if (entity.type === 'folder') {
+            url = '/api/folder/delete';
+        }
+
+        if (url) {
+            $http.post(url, {
+                file: entity.key
             })
-            .error(function (data) {
-                // Display the error
-                // TODO: Find something better than an alert
-                alert('There was an error deleting the file');
-            });
+                .success(function (data) {
+                    // Remove the file from the view
+                    $scope.entities = $scope.entities.filter(function (obj) {
+                        return obj._id !== entity._id;
+                    });
+                })
+                .error(function (data) {
+                    // Display the error
+                    // TODO: Find something better than an alert
+                    alert('There was an error deleting the entity');
+                });
+        }
     };
 
     $scope.openFolder = function (entity) {
