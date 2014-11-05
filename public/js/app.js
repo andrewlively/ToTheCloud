@@ -52,7 +52,20 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
     };
 
     $scope.delete = function (entity) {
-
+        $http.post('/api/file/delete', {
+            file: entity.key
+        })
+            .success(function (data) {
+                // Remove the file from the view
+                $scope.entities = $scope.entities.filter(function (obj) {
+                    return obj._id !== entity._id;
+                });
+            })
+            .error(function (data) {
+                // Display the error
+                // TODO: Find something better than an alert
+                alert('There was an error deleting the file');
+            });
     };
 
     $scope.openFolder = function (entity) {
@@ -63,7 +76,7 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
             $scope.path += ($scope.path.length === 0 ? '' : '/') + entity.name;
         }
     };
-    
+
     $scope.goUpDirectory = function () {
         $scope.directories.pop();
         if ($scope.directories.length > 0) {
@@ -92,11 +105,11 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
 
     $scope.createNewFolder = function () {
         var parent = null;
-        
+
         if ($scope.currentDirectory) {
             parent = $scope.currentDirectory._id;
         }
-        
+
         $http.post('/api/folder/new', {
             folder: $scope.newFolder,
             parent: parent
@@ -125,7 +138,7 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
 
             });
     }
-    
+
     getEntitiesForParent(null);
 
 });

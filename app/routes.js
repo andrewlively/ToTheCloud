@@ -26,6 +26,17 @@ module.exports = function (app, passport) {
             res.redirect('/');
         });
     });
+    
+    app.post('/api/file/delete', isLoggedIn, function (req, res) {
+        EntityBrowser.deleteFileEntity({
+            file: req.body.file,
+            user: req.user._id
+        }, function (err) {
+            res.status(err ? 422 : 200).json({
+                status: err ? 'ERROR' : 'SUCCESS'
+            }).end();
+        });
+    });
 
     app.post('/api/folder/new', isLoggedIn, function (req, res) {
         EntityBrowser.createNewFolderEntity({

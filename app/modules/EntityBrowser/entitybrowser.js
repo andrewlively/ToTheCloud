@@ -21,7 +21,7 @@ exports.createNewFileEntity = function (data, callback) {
                 // Read the file
                 var newKey = uuid.v4();
                 var newPath = __dirname + '/../../files/' + data.user + '/' + newKey;
-                
+
                 fs.move(data.file.path, newPath, function (err) {
                     callback(err, newKey);
                 });
@@ -45,6 +45,28 @@ exports.createNewFileEntity = function (data, callback) {
     } catch (ex) {
         callback('Unknown error');
     }
+};
+
+exports.deleteFileEntity = function (data, callback) {
+    async.series([
+
+        function (callback) {
+            Entity.findOne({
+                key: data.file
+            }, function (err, result) {
+                if (result.owner === String(data.user)) {
+                    result.remove(function (e) {
+                        callback(e);
+                    });
+                } else {
+                    callback('Not authorized to delete this entity');
+                }
+            });
+        },
+        function (callback) {
+            fs.remove(__dirname + '/../../files/' + data.user + '/' + data.file, callback);
+        }
+    ], callback);
 };
 
 exports.createNewFolderEntity = function (data, callback) {
