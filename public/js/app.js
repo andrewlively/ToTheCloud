@@ -1,5 +1,5 @@
 /*global angular, _ */
-var app = angular.module('cloudApp', ['ui.router']);
+var app = angular.module('cloudApp', ['ui.router', 'ngSanitize', 'com.2fdevs.videogular']);
 
 app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
     //
@@ -35,7 +35,9 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
     $scope.path = '';
     $scope.currentDirectory = null;
     $scope.directories = [];
-    
+    $scope.videoPlayer = {
+        theme: 'http://www.videogular.com/styles/themes/default/videogular.css'
+    };
     $scope.filePreview = {
         name: '',
         url: '',
@@ -93,22 +95,24 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
         } else if (entity.type === 'file') {
             var fileType = entity.name.slice(entity.name.lastIndexOf('.') + 1).toLocaleLowerCase();
             var imageTypes = ['jpg', 'jpeg', 'png', 'gif', 'mpb'];
-            var movieTypes = ['mp4', 'mov', 'flv'];
+            var videoTypes = ['mp4', 'mov', 'flv', 'avi'];
             var audioTypes = ['mp3'];
             var docTypes = ['doc', 'docx', 'txt'];
             
             if (imageTypes.indexOf(fileType) > -1) {
                 $scope.filePreview.type = 'image';
-            } else if (movieTypes.indexOf(fileType)) {
-                $scope.filePreview.type = 'movie';
-            } else if (audioTypes.indexOf(fileType)) {
+            } else if (videoTypes.indexOf(fileType) > -1) {
+                $scope.filePreview.type = 'video';
+            } else if (audioTypes.indexOf(fileType) > -1) {
                 $scope.filePreview.type = 'audio';
-            } else if (docTypes.indexOf(fileType)) {
+            } else if (docTypes.indexOf(fileType) > -1) {
                 $scope.filePreview.type = 'doc';
             }
             
             $scope.filePreview.name = entity.name;
             $scope.filePreview.url = '/download/' + entity.key;
+            
+            console.log($scope.filePreview.url);
             
             jQuery('#filePreviewModal').modal('show');
             

@@ -6,9 +6,11 @@
         <button data-toggle="modal" ng-click="resetNewFolder()" data-target="#createFolderModal" class="btn btn-primary">
             Create Folder
         </button>
+        <!--
         <button data-toggle="modal" ng-click="resetNewFileDump()" data-target="#createFileDumpModal" class="btn btn-primary">
             Create File Dump
         </button>
+-->
     </div>
 </div>
 <div class="row">
@@ -154,6 +156,10 @@
             </div>
             <div class="modal-body" style="text-align: center">
                 <img class="image-preview" ng-if="filePreview.type == 'image'" ng-src="{{ filePreview.url }}" alt="{{ filePreview.name }}">
+                <videogular ng-if="filePreview.type == 'video'" vg-theme="videoPlayer.theme">
+                    <vg-video vg-src="filePreview.url" vg-native-controls="true">
+                    </vg-video>
+                </videogular>
             </div>
         </div>
     </div>
