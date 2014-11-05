@@ -116,9 +116,10 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
         })
             .success(function (d) {
                 $scope.entities.push(d.newFolder);
+                jQuery('#createFolderModal').modal('hide');
             })
             .error(function (d) {
-                // TODO: Handle error
+                alert('There was an error creating the folder');
             });
 
     };
