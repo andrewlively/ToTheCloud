@@ -3,6 +3,7 @@ var Entity = require('../../models/entity');
 var fs = require('fs-extra');
 var uuid = require('uuid');
 var async = require('async');
+var _ = require('lodash');
 
 exports.getEntitiesForLevel = function (data, callback) {
     Entity.find({
@@ -48,23 +49,23 @@ exports.createNewFileEntity = function (data, callback) {
 };
 
 exports.deleteFileEntity = function (data, callback) {
-    async.series([
+    async.waterfall([
 
         function (callback) {
             Entity.findOne({
-                key: data.file
+                _id: data.file
             }, function (err, result) {
                 if (result.owner === String(data.user)) {
                     result.remove(function (e) {
-                        callback(e);
+                        callback(e, result.key);
                     });
                 } else {
-                    callback('Not authorized to delete this entity');
+                    callback('Not authorized to delete this entity', null);
                 }
             });
         },
-        function (callback) {
-            fs.remove(__dirname + '/../../files/' + data.user + '/' + data.file, callback);
+        function (key, callback) {
+            fs.remove(__dirname + '/../../files/' + data.user + '/' + key, callback);
         }
     ], callback);
 };
@@ -82,4 +83,37 @@ exports.createNewFolderEntity = function (data, callback) {
     } catch (ex) {
         callback('Unknown error');
     }
+};
+
+exports.deleteFolderEntity = function (data, callback) {
+    try {
+        var folders = [data.folder];
+        var files = [];
+
+        async.eachSeries(folders, function (id, _callback) {
+            Entity.find({
+                parent: id
+            }).exec(function (err, ent) {
+                if (!err && ent) {
+                    var results = _.groupBy(ent, function (obj) {
+                        return obj.type;
+                    });
+
+                    folders = folders.concat(results.folder);
+                    files = files.concat(results.file);
+                    
+                    _callback(err, results.folder);
+                } else {
+                    _callback(err);
+                }
+            });
+        }, function (err) {
+            console.log(folders.length);
+            console.log(files.length);
+        });
+
+    } catch (ex) {
+        callback('Unknown error');
+    }
+
 };

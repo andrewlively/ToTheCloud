@@ -50,6 +50,17 @@ module.exports = function (app, passport) {
             }).end();
         });
     });
+    
+    app.post('/api/folder/delete', isLoggedIn, function (req, res) {
+        EntityBrowser.deleteFolderEntity({
+            folder: req.body.folder,
+            user: req.user._id
+        }, function (err) {
+            res.status(err ? 422 : 200).json({
+                status: err ? 'ERROR' : 'SUCCESS'
+            }).end();
+        });
+    });
 
     // frontend routes =========================================================
 

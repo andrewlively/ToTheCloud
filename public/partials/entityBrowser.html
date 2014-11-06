@@ -25,56 +25,58 @@
 </div>
 <div class="row">
     <div class="col-sm-12 col-md-12">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>File Name</th>
-                    <th>Date Created</th>
-                    <th>Last Modified</th>
-                    <th>Size</th>
-                    <th>Share</th>
-                    <th>Download</th>
-                    <th>Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="entity in entities">
-                    <td>
-                        <i class="icon" ng-class="{'ion-document': entity.type == 'file', 'ion-ios7-folder': entity.type == 'folder'}"></i>
-                    </td>
-                    <td>
-                        <span class="fake-link" ng-click="open(entity)">
+        <div cg-busy="{promise:tablePromise,message:tableMessage,backdrop:true,delay:0}">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>File Name</th>
+                        <th>Date Created</th>
+                        <th>Last Modified</th>
+                        <th>Size</th>
+                        <th>Share</th>
+                        <th>Download</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="entity in entities">
+                        <td>
+                            <i class="icon" ng-class="{'ion-document': entity.type == 'file', 'ion-ios7-folder': entity.type == 'folder'}"></i>
+                        </td>
+                        <td>
+                            <span class="fake-link" ng-click="open(entity)">
                             {{ entity.name }}
                         </span>
-                    </td>
-                    <td>
-                        {{ entity.date_added | date:'medium' }}
-                    </td>
-                    <td>
-                        {{ entity.last_modified | date:'medium' }}
-                    </td>
-                    <td>
-                        {{ entity.size }}
-                    </td>
-                    <td>
-                        <span ng-if="entity.type == 'file'" ng-click="share(entity)" class="fake-link">
+                        </td>
+                        <td>
+                            {{ entity.date_added | date:'medium' }}
+                        </td>
+                        <td>
+                            {{ entity.last_modified | date:'medium' }}
+                        </td>
+                        <td>
+                            {{ entity.size }}
+                        </td>
+                        <td>
+                            <span ng-if="entity.type == 'file'" ng-click="share(entity)" class="fake-link">
                             Share
                         </span>
-                    </td>
-                    <td>
-                        <a ng-if="entity.type == 'file'" target="_self" ng-href="/download/{{ entity.key }}" download="{{ entity.name }}">
+                        </td>
+                        <td>
+                            <a ng-if="entity.type == 'file'" target="_self" ng-href="/download/{{ entity.key }}" download="{{ entity.name }}">
                             Download
                         </a>
-                    </td>
-                    <td>
-                        <span ng-click="delete(entity)" class="fake-link">
+                        </td>
+                        <td>
+                            <span ng-click="delete(entity)" class="fake-link">
                             Delete
                         </span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 <div class="modal fade" id="uploadFileModal" tabindex="-1" role="dialog" aria-labelledby="uploadFileModalLabel" aria-hidden="true">

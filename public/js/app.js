@@ -1,5 +1,5 @@
 /*global angular, _ */
-var app = angular.module('cloudApp', ['ui.router', 'ngSanitize', 'com.2fdevs.videogular']);
+var app = angular.module('cloudApp', ['ui.router', 'ngSanitize', 'com.2fdevs.videogular', 'cgBusy', 'oitozero.ngSweetAlert']);
 
 app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
     //
@@ -30,9 +30,11 @@ app.controller('BaseCtrl', function ($scope, $rootScope) {
 
 });
 
-app.controller('EntityBrowserCtrl', function ($scope, $http) {
+app.controller('EntityBrowserCtrl', function ($scope, $http, SweetAlert) {
     $scope.entities = [];
     $scope.path = '';
+    $scope.tableMessage = '';
+    $scope.tablePromise = null;
     $scope.currentDirectory = null;
     $scope.directories = [];
     $scope.videoPlayer = {
@@ -61,17 +63,19 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
 
     $scope.delete = function (entity) {
         var url = null;
+        var ent = {};
 
         if (entity.type === 'file') {
             url = '/api/file/delete';
+            $scope.tableMessage = 'Deleting file...';
         } else if (entity.type === 'folder') {
             url = '/api/folder/delete';
+            $scope.tableMessage = 'Deleting folder...';
         }
 
         if (url) {
-            $http.post(url, {
-                file: entity.key
-            })
+            ent[entity.type] = entity._id;
+            $scope.tablePromise = $http.post(url, ent)
                 .success(function (data) {
                     // Remove the file from the view
                     $scope.entities = $scope.entities.filter(function (obj) {
@@ -81,7 +85,7 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
                 .error(function (data) {
                     // Display the error
                     // TODO: Find something better than an alert
-                    alert('There was an error deleting the entity');
+                    SweetAlert.swal('Delete error', 'There was an error trying to delete the ' + entity.type + '. Please try again.', 'error');
                 });
         }
     };
@@ -98,7 +102,7 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
             var videoTypes = ['mp4', 'mov', 'flv', 'avi'];
             var audioTypes = ['mp3'];
             var docTypes = ['doc', 'docx', 'txt'];
-            
+
             if (imageTypes.indexOf(fileType) > -1) {
                 $scope.filePreview.type = 'image';
             } else if (videoTypes.indexOf(fileType) > -1) {
@@ -108,14 +112,12 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
             } else if (docTypes.indexOf(fileType) > -1) {
                 $scope.filePreview.type = 'doc';
             }
-            
+
             $scope.filePreview.name = entity.name;
             $scope.filePreview.url = '/download/' + entity.key;
-            
-            console.log($scope.filePreview.url);
-            
+
             jQuery('#filePreviewModal').modal('show');
-            
+
         }
     };
 
@@ -161,7 +163,7 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
                 jQuery('#createFolderModal').modal('hide');
             })
             .error(function (d) {
-                alert('There was an error creating the folder');
+                SweetAlert.swal('Create error', 'There was an error trying to create the folder. Please try again.', 'error');
             });
 
     };
