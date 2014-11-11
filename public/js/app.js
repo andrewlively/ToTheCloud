@@ -69,8 +69,9 @@ app.controller('EntityBrowserCtrl', function ($scope, $http, SweetAlert) {
             url = '/api/file/delete';
             $scope.tableMessage = 'Deleting file...';
         } else if (entity.type === 'folder') {
-            url = '/api/folder/delete';
-            $scope.tableMessage = 'Deleting folder...';
+//            url = '/api/folder/delete';
+//            $scope.tableMessage = 'Deleting folder...';
+            SweetAlert.swal('', 'This feature is not yet available');
         }
 
         if (url) {
