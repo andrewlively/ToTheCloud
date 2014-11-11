@@ -89,7 +89,7 @@ exports.deleteFolderEntity = function (data, callback) {
     try {
         var folders = [data.folder];
         var files = [];
-        
+
         async.eachSeries(folders, function (id, _callback) {
             Entity.find({
                 parent: id
@@ -104,10 +104,10 @@ exports.deleteFolderEntity = function (data, callback) {
                             folders.push(obj._id);
                         });
                     }
-                    
+
                     if (results.file) {
                         results.file.forEach(function (obj) {
-                            files.push(obj._id);
+                            files.push(obj);
                         });
                     }
 
@@ -117,11 +117,55 @@ exports.deleteFolderEntity = function (data, callback) {
                 }
             });
         }, function (err) {
-            // TODO: Delete the entities
+            if (err) {
+                callback(err);
+            } else {
+                async.series([
+                    function (callback) {
+                        // Remove the entities from the database
+                        Entity.remove({
+                            _id: {
+                                $in: folders
+                            }
+                        }, function (e) {
+                            if (e) {
+                                callback(e);
+                            } else {
+                                callback(null);
+                            }
+                        });
+                    },
+                    function (callback) {
+                        // Remove each of the files from the database then delete the file
+                        async.eachSeries(files, function (obj, cb) {
+                            Entity.remove({
+                                _id: obj._id
+                            }, function (err) {
+                                if (err) {
+                                    cb(err);
+                                } else {
+                                    fs.remove(__dirname + '/../../files/' + data.user + '/' + obj.key, function (err) {
+                                        if (err) {
+                                            cb(err);
+                                        } else {
+                                            cb(null);
+                                        }
+                                    });
+                                }
+                            });
+                        }, callback);
+                    }
+                ], function (err) {
+                    if (err) {
+                        callback(err);
+                    } else {
+                        callback(null);
+                    }
+                });
+            }
         });
 
     } catch (ex) {
         callback('Unknown error');
     }
-
 };
