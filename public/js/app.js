@@ -69,9 +69,9 @@ app.controller('EntityBrowserCtrl', function ($scope, $http, SweetAlert) {
             url = '/api/file/delete';
             $scope.tableMessage = 'Deleting file...';
         } else if (entity.type === 'folder') {
-//            url = '/api/folder/delete';
-//            $scope.tableMessage = 'Deleting folder...';
-            SweetAlert.swal('', 'This feature is not yet available');
+            url = '/api/folder/delete';
+            $scope.tableMessage = 'Deleting folder...';
+//            SweetAlert.swal('', 'This feature is not yet available');
         }
 
         if (url) {
@@ -96,6 +96,7 @@ app.controller('EntityBrowserCtrl', function ($scope, $http, SweetAlert) {
             $scope.directories.push(entity);
             $scope.currentDirectory = entity;
             getEntitiesForParent(entity._id);
+            console.log(entity);
             $scope.path += ($scope.path.length === 0 ? '' : '/') + entity.name;
         } else if (entity.type === 'file') {
             var fileType = entity.name.slice(entity.name.lastIndexOf('.') + 1).toLocaleLowerCase();

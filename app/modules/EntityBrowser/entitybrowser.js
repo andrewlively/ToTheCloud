@@ -89,9 +89,8 @@ exports.deleteFolderEntity = function (data, callback) {
     try {
         var folders = [data.folder];
         var files = [];
-
+        
         async.eachSeries(folders, function (id, _callback) {
-            console.log(id); //545bff32a08530bd179fa3d5
             Entity.find({
                 parent: id
             }).exec(function (err, ent) {
@@ -99,31 +98,26 @@ exports.deleteFolderEntity = function (data, callback) {
                     var results = _.groupBy(ent, function (obj) {
                         return obj.type;
                     });
-                    
-                    var newFolders = [];
-                    
+
                     if (results.folder) {
                         results.folder.forEach(function (obj) {
-                            newFolders.push(obj._id);
+                            folders.push(obj._id);
                         });
                     }
                     
                     if (results.file) {
                         results.file.forEach(function (obj) {
-                            return files.push(obj._id);
+                            files.push(obj._id);
                         });
                     }
-                    
-                    console.log(newFolders);
-                    
-                    _callback(err, newFolders);
+
+                    _callback(err);
                 } else {
                     _callback(err);
                 }
             });
         }, function (err) {
-//            console.log(folders.length);
-//            console.log(files.length);
+            // TODO: Delete the entities
         });
 
     } catch (ex) {
