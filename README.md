@@ -18,7 +18,7 @@ File hosting application
   - Single-role user management
   - File storage
   - Folder creation
-  - File preview (currently only support for iamges; more to come)
+  - File preview (currently only support for images; more to come)
 
 ## Next Steps
   - Support for multiple roles
