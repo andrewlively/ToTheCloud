@@ -3,6 +3,7 @@ module.exports = function (app, passport) {
     var fs = require('fs');
     var uuid = require('uuid');
     var EntityBrowser = require('./modules/EntityBrowser/entitybrowser');
+    var User = require('./modules/User/user');
 
     // server routes ===========================================================
     // handle things like api calls
@@ -26,7 +27,7 @@ module.exports = function (app, passport) {
             res.redirect('/');
         });
     });
-    
+
     app.post('/api/file/delete', isLoggedIn, function (req, res) {
         EntityBrowser.deleteFileEntity({
             file: req.body.file,
@@ -50,7 +51,7 @@ module.exports = function (app, passport) {
             }).end();
         });
     });
-    
+
     app.post('/api/folder/delete', isLoggedIn, function (req, res) {
         EntityBrowser.deleteFolderEntity({
             folder: req.body.folder,
@@ -59,6 +60,14 @@ module.exports = function (app, passport) {
             console.log('Returned from removing all');
             res.status(err ? 422 : 200).json({
                 status: err ? 'ERROR' : 'SUCCESS'
+            }).end();
+        });
+    });
+
+    app.post('/api/user/register', function (req, res) {
+        User.register(req.body, function (err, user) {
+            res.status(err ? 422 : 200).json({
+                message: err ? 'An error occurred' : 'Account successfully created'
             }).end();
         });
     });

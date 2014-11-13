@@ -1,26 +1,104 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="login">
 
 <head>
     <% include ../head %>
-    <link rel="stylesheet" href="http://getbootstrap.com/examples/signin/signin.css">
+        <link rel="stylesheet" href="http://getbootstrap.com/examples/signin/signin.css">
 </head>
 
-<body class="container">
+<body class="container" ng-controller="LoginController">
     <div class="container">
 
         <form action="/login" method="post" class="form-signin" role="form">
             <h2 class="form-signin-heading">Please sign in</h2>
             <%if (loginMessage) { %>
                 <%= loginMessage %>
-            <% } %>
-            <input type="email" name="email" class="form-control" placeholder="Email address" required autofocus>
-            <input type="password" name="password" class="form-control" placeholder="Password" required>
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+                    <% } %>
+                        <input type="email" name="email" class="form-control" placeholder="Email address" required autofocus>
+                        <input type="password" name="password" class="form-control" placeholder="Password" required>
+                        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
         </form>
+
+        <div class="row">
+            <div class="col-md-2 col-md-offset-5">
+                <button data-toggle="modal" ng-click="showResetPassword()" data-target="#resetPasswordModal" class="btn btn-primary btn-block">
+                    Reset password
+                </button>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 10px">
+            <div class="col-md-2 col-md-offset-5">
+                <button data-toggle="modal" ng-click="showCreateAccount()" data-target="#createAccountModal" class="btn btn-primary btn-block">
+                    Create an account
+                </button>
+            </div>
+        </div>
 
     </div>
     <!-- /container -->
+    <div class="modal fade" id="resetPasswordModal" tabindex="-1" role="dialog" aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                    </button>
+                    <h4 class="modal-title" id="resetPasswordModalLabel">Reset Password</h4>
+                </div>
+                <div class="modal-body" style="text-align: center">
+                    <form class="form-horizontal" ng-submit="resetPassword()" role="form">
+                        <div class="form-group">
+                            <label for="resetEmailForm" class="col-sm-2 control-label">Email</label>
+                            <div class="col-sm-10">
+                                <input type="email" class="form-control" id="resetEmailForm" placeholder="Email">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Reset</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="createAccountModal" tabindex="-1" role="dialog" aria-labelledby="createAccountModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                    </button>
+                    <h4 class="modal-title" id="createAccountModalLabel">Create an account</h4>
+                </div>
+                <div class="modal-body" style="text-align: center">
+                    <form ng-submit="signUp()" role="form">
+                        <div class="form-group">
+                            <label for="firstNameField">First name</label>
+                            <input type="text" ng-model="signUpModel.firstName" class="form-control" id="firstNameField" placeholder="John" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastNameField">Last name</label>
+                            <input type="text" ng-model="signUpModel.lastName" class="form-control" id="lastNameField" placeholder="Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="emailField">Email</label>
+                            <input type="email" ng-model="signUpModel.email" class="form-control" id="emailField" placeholder="johndoe@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="passwordField">Password</label>
+                            <input type="password" ng-model="signUpModel.password" class="form-control" id="passwordField" placeholder="Password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPasswordField">Confirm password</label>
+                            <input type="password" ng-model="signUpModel.confirmPassword" class="form-control" id="confirmPasswordField" placeholder="Confirm Password" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Create Account</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/login.js"></script>
 </body>
 
 </html>
