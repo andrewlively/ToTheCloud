@@ -1,4 +1,4 @@
-/*global require, exports */
+/*global require, exports, __dirname */
 var User = require('../../models/user');
 var nodemailer = require('nodemailer');
 var async = require('async');
@@ -6,22 +6,35 @@ var redis = require("redis");
 var resetClient = redis.createClient();
 var uuid = require('uuid');
 var systemSettings = require('../../../config/systemSettings');
+var fs = require('fs-extra');
 
 resetClient.select(1, redis.print);
 
 var transport = nodemailer.createTransport("SMTP", {});
 
 exports.register = function (data, callback) {
+    console.log(data);
     try {
-        User.findOne({
-            email: data.email
-        }, function (err, user) {
-            if (err) {
-                callback(err, null);
-            } else if (user) {
-                callback('Email already exists', null);
-            } else {
-                // TODO: Validate data
+        var uid = '';
+        
+        async.series([
+
+            function (_callback) {
+                // Make sure user doesn't already exist
+                User.findOne({
+                    email: data.email
+                }, function (err, user) {
+                    if (err) {
+                        _callback(err, null);
+                    } else if (user) {
+                        _callback('Email already exists', null);
+                    } else {
+                        _callback(null, null);
+                    }
+                });
+            },
+            function (_callback) {
+                // Create user in database
                 var newUser = new User();
 
                 // set the user's local credentials
@@ -31,14 +44,25 @@ exports.register = function (data, callback) {
                 newUser.lastName = data.lastName;
 
                 // save the user
-                newUser.save(function (err) {
+                newUser.save(function (err, nu) {
                     if (err) {
-                        callback(err, null);
+                        _callback(err, null);
                     } else {
-                        callback(null, newUser);
+                        uid = nu._id;
+                        _callback(null, nu);
                     }
                 });
+            },
+            function (_callback) {
+                // Create user's directory
+                var dir = __dirname + '/../../files/' + uid;
+                fs.ensureDir(dir, function (err) {
+                    _callback(err, null);
+                });
             }
+        ], function (err, results) {
+            console.log(err);
+            callback(err, results[1]);
         });
     } catch (ex) {
         callback('Unknown error', null);
@@ -80,7 +104,7 @@ exports.resetPassword = function (data, callback) {
                     subject: 'Reset Password Request', // Subject line
                     html: '<a href="' + systemSettings.domain + '/reset?token=' + token + '">Reset Password Link</a>' // html body
                 };
-                
+
 
                 // send mail with defined transport object
                 transport.sendMail(mailOptions, function (err) {
