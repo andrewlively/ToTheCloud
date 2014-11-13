@@ -30,7 +30,7 @@ app.controller('BaseCtrl', function ($scope, $rootScope) {
 
 });
 
-app.controller('EntityBrowserCtrl', function ($scope, $http) {
+app.controller('EntityBrowserCtrl', function ($scope, $http, SweetAlert) {
     $scope.entities = [];
     $scope.path = '';
     $scope.tableMessage = '';
@@ -65,28 +65,41 @@ app.controller('EntityBrowserCtrl', function ($scope, $http) {
         var url = null;
         var ent = {};
 
-        if (entity.type === 'file') {
-            url = '/api/file/delete';
-            $scope.tableMessage = 'Deleting file...';
-        } else if (entity.type === 'folder') {
-            url = '/api/folder/delete';
-            $scope.tableMessage = 'Deleting folder...';
-        }
+        SweetAlert.swal({
+                title: 'Are you sure you want to delete this ' + entity.type + '?',
+                text: 'Once this ' + entity.type + ' is deleted it cannot be restored.',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#DD6B55',
+                confirmButtonText: 'Delete'
+            },
+            function (shouldDelete) {
+                if (shouldDelete) {
+                    if (entity.type === 'file') {
+                        url = '/api/file/delete';
+                        $scope.tableMessage = 'Deleting file...';
+                    } else if (entity.type === 'folder') {
+                        url = '/api/folder/delete';
+                        $scope.tableMessage = 'Deleting folder...';
+                    }
 
-        if (url) {
-            ent[entity.type] = entity._id;
-            $scope.tablePromise = $http.post(url, ent)
-                .success(function (data) {
-                    // Remove the file from the view
-                    $scope.entities = $scope.entities.filter(function (obj) {
-                        return obj._id !== entity._id;
-                    });
-                })
-                .error(function (data) {
-                    // Display the error
-                    SweetAlert.swal('Delete error', 'There was an error trying to delete the ' + entity.type + '. Please try again.', 'error');
-                });
-        }
+                    if (url) {
+                        ent[entity.type] = entity._id;
+                        $scope.tablePromise = $http.post(url, ent)
+                            .success(function (data) {
+                                // Remove the file from the view
+                                $scope.entities = $scope.entities.filter(function (obj) {
+                                    return obj._id !== entity._id;
+                                });
+                            })
+                            .error(function (data) {
+                                // Display the error
+                                SweetAlert.swal('Delete error', 'There was an error trying to delete the ' + entity.type + '. Please try again.', 'error');
+                            });
+                    }
+                }
+            }
+        );
     };
 
     $scope.open = function (entity) {
