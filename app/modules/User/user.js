@@ -8,12 +8,16 @@ var uuid = require('uuid');
 var systemSettings = require('../../../config/systemSettings');
 var fs = require('fs-extra');
 
-resetClient.select(1, redis.print);
+resetClient.select(1, function (err) {
+    if (err) {
+        console.log('There was an issue connecting the provided Redis instance.');
+        process.exit(1);
+    }
+});
 
 var transport = nodemailer.createTransport("SMTP", {});
 
 exports.register = function (data, callback) {
-    console.log(data);
     try {
         var uid = '';
         
@@ -61,7 +65,6 @@ exports.register = function (data, callback) {
                 });
             }
         ], function (err, results) {
-            console.log(err);
             callback(err, results[1]);
         });
     } catch (ex) {
@@ -115,7 +118,6 @@ exports.resetPassword = function (data, callback) {
             callback(err);
         });
     } catch (ex) {
-        console.log(ex);
         callback('Unknown error');
     }
 };

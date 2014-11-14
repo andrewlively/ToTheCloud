@@ -59,7 +59,6 @@ module.exports = function (app, passport) {
             folder: req.body.folder,
             user: req.user._id
         }, function (err) {
-            console.log('Returned from removing all');
             res.status(err ? 422 : 200).json({
                 status: err ? 'ERROR' : 'SUCCESS'
             }).end();
