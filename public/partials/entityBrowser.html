@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-sm-12 col-md-12">
-        <button data-toggle="modal" data-target="#uploadFileModal" class="btn btn-primary">
-            Upload File
+        <button data-toggle="modal" ng-click="resetNewFile()" data-target="#uploadFileModal" class="btn btn-primary">
+            Upload Files
         </button>
         <button data-toggle="modal" ng-click="resetNewFolder()" data-target="#createFolderModal" class="btn btn-primary">
             Create Folder
@@ -87,24 +87,25 @@
                     <span aria-hidden="true">&times;</span>
                     <span class="sr-only">Close</span>
                 </button>
-                <h4 class="modal-title" id="uploadFileModalLabel">Upload File</h4>
+                <h4 class="modal-title" id="uploadFileModalLabel">Upload Files</h4>
             </div>
             <div class="modal-body">
-                <form action="/api/file/new" method="post" enctype="multipart/form-data" class="form-horizontal" role="form">
-                    <div class="form-group">
-                        <label for="newFileUpload" class="col-sm-3 control-label">File:</label>
-                        <div class="col-sm-9">
-                            <span class="btn btn-primary btn-file">
-                                Browse... <input name="upload" type="file" id="newFileUpload" required>
-                            </span>
+                <div class="dropzone" ng-file-drop="onFileSelect($files)">Drop files here to upload</div>
+                <div class="row" style="margin-top: 10px">
+                    <div class="col-md-12" style="border-bottom: 1px solid black">
+                        File upload queue
+                    </div>
+                </div>
+                <div class="upload-file-queue">
+                    <div ng-repeat="file in fileUploadQueue" class="row">
+                        <div class="col-md-10">
+                            {{ file.name }}
+                        </div>
+                        <div class="col-md-2">
+                            {{ file.progress }}
                         </div>
                     </div>
-                    <input type="hidden" name="parent" value="{{ currentDirectory._id }}">
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <input type="submit" class="btn btn-primary" value="Upload" />
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>

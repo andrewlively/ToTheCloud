@@ -1,5 +1,5 @@
-/*global angular, _ */
-var app = angular.module('cloudApp', ['ui.router', 'ngSanitize', 'com.2fdevs.videogular', 'cgBusy', 'oitozero.ngSweetAlert']);
+/*global angular, _, async, jQuery */
+var app = angular.module('cloudApp', ['ui.router', 'ngSanitize', 'com.2fdevs.videogular', 'cgBusy', 'oitozero.ngSweetAlert', 'angularFileUpload']);
 
 app.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
     //
@@ -30,7 +30,7 @@ app.controller('BaseCtrl', function ($scope, $rootScope) {
 
 });
 
-app.controller('EntityBrowserCtrl', function ($scope, $http, SweetAlert) {
+app.controller('EntityBrowserCtrl', function ($scope, $http, SweetAlert, $upload) {
     $scope.entities = [];
     $scope.path = '';
     $scope.tableMessage = '';
@@ -91,8 +91,7 @@ app.controller('EntityBrowserCtrl', function ($scope, $http, SweetAlert) {
                                 $scope.entities = $scope.entities.filter(function (obj) {
                                     return obj._id !== entity._id;
                                 });
-                            })
-                            .error(function (data) {
+                            }).error(function (data) {
                                 // Display the error
                                 SweetAlert.swal('Delete error', 'There was an error trying to delete the ' + entity.type + '. Please try again.', 'error');
                             });
@@ -148,6 +147,10 @@ app.controller('EntityBrowserCtrl', function ($scope, $http, SweetAlert) {
         }
     };
 
+    $scope.resetNewFile = function () {
+        $scope.fileUploadQueue = [];
+    };
+    
     $scope.resetNewFolder = function () {
         $scope.newFolder.name = '';
     };
@@ -157,6 +160,43 @@ app.controller('EntityBrowserCtrl', function ($scope, $http, SweetAlert) {
         $scope.newFileDump.isPublic = false;
         $scope.newFileDump.isProtected = false;
         $scope.newFileDump.requiresAccount = false;
+    };
+
+    $scope.fileUploadQueue = [];
+
+    $scope.onFileSelect = function ($file) {
+        //$files: an array of files selected, each file has name, size, and type.
+
+        $scope.fileUploadQueue = $file;
+
+        var uploadedFiles = [];
+
+        var data = {};
+
+        if ($scope.currentDirectory) {
+            data.parent = $scope.currentDirectory._id;
+        }
+        
+        async.eachSeries($scope.fileUploadQueue, function (file, callback) {
+            $scope.upload = $upload.upload({
+                url: '/api/file/new',
+                method: 'POST',
+                file: file,
+                data: data
+            }).progress(function (evt) {
+                file.progress = parseInt(100.0 * evt.loaded / evt.total) + '%';
+            }).success(function (data) {
+                $scope.entities.push(data.entity);
+                callback(null);
+            }).error(function () {
+                file.progress = 'Error';
+                callback('Failed to upload file');
+            });
+        }, function (err) {
+            if (err) {
+                SweetAlert.swal('File upload error', 'There was an error trying to upload the file. Please try again.', 'error');
+            }
+        });
     };
 
     $scope.createNewFolder = function () {
@@ -169,14 +209,12 @@ app.controller('EntityBrowserCtrl', function ($scope, $http, SweetAlert) {
         $http.post('/api/folder/new', {
             folder: $scope.newFolder,
             parent: parent
-        })
-            .success(function (d) {
-                $scope.entities.push(d.newFolder);
-                jQuery('#createFolderModal').modal('hide');
-            })
-            .error(function (d) {
-                SweetAlert.swal('Create error', 'There was an error trying to create the folder. Please try again.', 'error');
-            });
+        }).success(function (d) {
+            $scope.entities.push(d.newFolder);
+            jQuery('#createFolderModal').modal('hide');
+        }).error(function (d) {
+            SweetAlert.swal('Create error', 'There was an error trying to create the folder. Please try again.', 'error');
+        });
 
     };
 
@@ -187,13 +225,11 @@ app.controller('EntityBrowserCtrl', function ($scope, $http, SweetAlert) {
             params: {
                 parent: parent
             }
-        })
-            .success(function (data) {
-                $scope.entities = data;
-            })
-            .error(function (data) {
-
-            });
+        }).success(function (data) {
+            $scope.entities = data;
+        }).error(function (data) {
+            // TODO: Alert the user of the error
+        });
     }
 
     getEntitiesForParent(null);

@@ -31,3 +31,14 @@
     height: auto;
     margin: auto;
 }
+.dropzone {
+    width: 100%;
+    height: 150px;
+    text-align: center;
+    line-height: 150px;
+    border: 1px solid black;
+}
+.upload-file-queue {
+    width: 100%;
+    min-height: 50px;
+}

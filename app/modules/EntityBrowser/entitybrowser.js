@@ -40,8 +40,8 @@ exports.createNewFileEntity = function (data, callback) {
                     last_modified: new Date()
                 }).save(callback);
             }
-        ], function (err) {
-            callback(err);
+        ], function (err, entity) {
+            callback(err, entity);
         });
     } catch (ex) {
         callback('Unknown error');

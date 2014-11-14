@@ -20,11 +20,13 @@ module.exports = function (app, passport) {
 
     app.post('/api/file/new', isLoggedIn, function (req, res) {
         EntityBrowser.createNewFileEntity({
-            file: req.files.upload,
+            file: req.files.file,
             user: req.user._id,
             parent: req.body.parent
-        }, function (err) {
-            res.redirect('/');
+        }, function (err, entity) {
+            res.status(err ? 422 : 200).json({
+                entity: entity
+            });
         });
     });
 
@@ -71,7 +73,7 @@ module.exports = function (app, passport) {
             }).end();
         });
     });
-    
+
     app.post('/api/user/reset-password', function (req, res) {
         User.resetPassword(req.body, function (err) {
             res.status(err ? 422 : 200).json({
