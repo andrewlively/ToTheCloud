@@ -25,7 +25,6 @@ File hosting application
     - Start with predefined then eventually customizable
   - Better file upload
     - Upload progress bar
-    - Remove page reload after upload
   - Abstract file storage to allow other options (first will be AWS)
     - Currently hardcoded to use local file system
   - Add code tests
