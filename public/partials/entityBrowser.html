@@ -34,9 +34,7 @@
                         <th>Date Created</th>
                         <th>Last Modified</th>
                         <th>Size</th>
-                        <th>Share</th>
-                        <th>Download</th>
-                        <th>Delete</th>
+                        <th>Options</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,22 +54,35 @@
                             {{ entity.last_modified | date:'medium' }}
                         </td>
                         <td>
-                            {{ entity.size }}
+                            {{ entity.size | byteFilter }}
                         </td>
                         <td>
-                            <span ng-if="entity.type == 'file'" ng-click="share(entity)" class="fake-link">
-                            Share
-                        </span>
-                        </td>
-                        <td>
-                            <a ng-if="entity.type == 'file'" target="_self" ng-href="/download/{{ entity.key }}" download="{{ entity.name }}">
-                            Download
-                        </a>
-                        </td>
-                        <td>
-                            <span ng-click="delete(entity)" class="fake-link">
-                            Delete
-                        </span>
+                            <div class="dropdown">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                                    Options
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                                    <li role="presentation">
+                                        <a class="pointer" ng-if="entity.type == 'file'" target="_self" ng-href="/download/{{ entity.key }}" download="{{ entity.name }}">
+                                           <i class="icon ion-ios7-cloud-download"></i>
+                                            Download
+                                        </a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a class="pointer" ng-if="entity.type == 'file'" ng-click="share(entity)">
+                                           <i class="icon ion-share"></i>
+                                            Share
+                                        </a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a class="pointer" role="menuitem" ng-click="delete(entity)">
+                                           <i class="icon ion-trash-b"></i>
+                                            Delete
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
