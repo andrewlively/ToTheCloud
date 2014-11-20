@@ -121,6 +121,7 @@ exports.deleteFolderEntity = function (data, callback) {
                 callback(err);
             } else {
                 async.series([
+
                     function (callback) {
                         // Remove the entities from the database
                         Entity.remove({
@@ -179,5 +180,22 @@ exports.renameEntity = function (data, callback) {
         }, {}, callback);
     } catch (ex) {
         callback('Unknown error');
+    }
+};
+
+exports.getEntityInfoForId = function (id, callback) {
+    try {
+        Entity.findOne({
+            _id: id
+        })
+            .select('owner')
+            .select('name')
+            .select('key')
+            .lean()
+            .exec(function (err, result) {
+                callback(err, result);
+            });
+    } catch (ex) {
+        callback('Unknown error', null);
     }
 };

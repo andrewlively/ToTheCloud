@@ -105,7 +105,7 @@ exports.resetPassword = function (data, callback) {
                     from: systemSettings.support.email, // TODO: Pull from config
                     to: data.email, // list of receivers
                     subject: 'Reset Password Request', // Subject line
-                    html: '<a href="' + systemSettings.domain + '/reset?token=' + token + '">Reset Password Link</a>' // html body
+                    html: '<a href="' + systemSettings.host.domain + '/reset?token=' + token + '">Reset Password Link</a>' // html body
                 };
 
 

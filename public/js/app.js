@@ -57,8 +57,24 @@ app.controller('EntityBrowserCtrl', function ($scope, $http, SweetAlert, $upload
         requiresAccount: false
     };
 
-    $scope.share = function (entity) {
+    $scope.shareEntity = {
+        path: '',
+        name: ''
+    };
 
+    $scope.share = function (entity) {
+        $scope.shareEntity.name = entity.name;
+        $scope.tableMessage = 'Sharing...';
+        $scope.tablePromise = $http.post('/api/entity/share', {
+            entity: entity._id
+        })
+            .success(function (data) {
+                jQuery('#shareEntityModal').modal('show');
+                $scope.shareEntity.path = data.url;
+            })
+            .error(function () {
+                SweetAlert.swal('Share error', 'There was an error trying to share the ' + entity.type + '. Please try again.', 'error');
+            });
     };
 
     $scope.delete = function (entity) {
@@ -233,7 +249,7 @@ app.controller('EntityBrowserCtrl', function ($scope, $http, SweetAlert, $upload
     };
 
     $scope.renameEntity = function () {
-        $http.post('/api/' + $scope.entityRename.type + '/rename', $scope.entityRename)
+        $http.post('/api/entity/rename', $scope.entityRename)
             .success(function () {
                 $scope.entities.forEach(function (obj) {
                     if (obj._id === $scope.entityRename.id) {
