@@ -16,6 +16,7 @@ try {
     var multer = require('multer');
     var async = require('async');
     var db;
+    var systemSettings;
 } catch (ex) {
     console.log('ERROR: One or more modules are missing. Make sure to run `npm install`');
     process.exit(1);
@@ -26,16 +27,17 @@ async.series([
     function (callback) {
         try {
             db = require('./config/db');
+            systemSettings = require('./config/systemSettings');
 
             callback(null);
         } catch (ex) {
-            callback('Could not find the database config file. Make sure the db.js file exists and is formatted properly in the config directory.');
+            callback('Could not find the a config file. Make sure the config files exist and are formatted properly in the config directory.');
         }
     },
     function (callback) {
         try {
             // connect to our mongoDB database 
-            mongoose.connect(db.mongodb.url, function (err) {
+            mongoose.connect(db.mongodb.host, function (err) {
                 if (err) throw err;
 
                 callback(null);
@@ -96,13 +98,10 @@ async.series([
     function (callback) {
         try {
             // start app ===============================================
-            // set our port
-            var port = process.env.PORT || 1337;
+            var port = systemSettings.host.port;
 
-            // startup our app at http://localhost:8080
             app.listen(port);
-
-            // shoutout to the user                     
+                    
             console.log('Magic happens on port ' + port);
             
             callback(null);
