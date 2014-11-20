@@ -150,7 +150,7 @@ app.controller('EntityBrowserCtrl', function ($scope, $http, SweetAlert, $upload
     $scope.resetNewFile = function () {
         $scope.fileUploadQueue = [];
     };
-    
+
     $scope.resetNewFolder = function () {
         $scope.newFolder.name = '';
     };
@@ -176,7 +176,7 @@ app.controller('EntityBrowserCtrl', function ($scope, $http, SweetAlert, $upload
         if ($scope.currentDirectory) {
             data.parent = $scope.currentDirectory._id;
         }
-        
+
         async.eachSeries($scope.fileUploadQueue, function (file, callback) {
             $scope.upload = $upload.upload({
                 url: '/api/file/new',
@@ -218,6 +218,30 @@ app.controller('EntityBrowserCtrl', function ($scope, $http, SweetAlert, $upload
 
     };
 
+    $scope.entityRename = {
+        type: '',
+        name: '',
+        id: ''
+    };
+
+    $scope.openRenameEntity = function (entity) {
+        $scope.entityRename = {
+            type: entity.type,
+            name: entity.name,
+            id: entity._id
+        };
+    };
+
+    $scope.renameEntity = function () {
+        $http.post('/api/' + $scope.entityRename.type + '/rename', $scope.entityRename)
+            .success(function () {
+                // TODO: Rename local copy of entity
+            })
+            .error(function () {
+                // TODO: Present error to the user
+            });
+    };
+
     function getEntitiesForParent(parent) {
         $http({
             url: '/api/entities',
@@ -228,9 +252,10 @@ app.controller('EntityBrowserCtrl', function ($scope, $http, SweetAlert, $upload
         }).success(function (data) {
             $scope.entities = data;
         }).error(function (data) {
-            // TODO: Alert the user of the error
+            SweetAlert.swal('Fetch error', 'There was an error trying to fetch the entities for this parent. Please try again.', 'error');
         });
     }
+
 
     getEntitiesForParent(null);
 
