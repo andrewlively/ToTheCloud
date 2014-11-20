@@ -235,16 +235,21 @@ app.controller('EntityBrowserCtrl', function ($scope, $http, SweetAlert, $upload
     $scope.renameEntity = function () {
         $http.post('/api/' + $scope.entityRename.type + '/rename', $scope.entityRename)
             .success(function () {
-                // TODO: Rename local copy of entity
+                $scope.entities.forEach(function (obj) {
+                    if (obj._id === $scope.entityRename.id) {
+                        obj.name = $scope.entityRename.name;
+                    }
+                });
+                jQuery('#renameEntityModal').modal('hide');
             })
             .error(function () {
-                // TODO: Present error to the user
+                SweetAlert.swal('Rename error', 'There was an error trying to create the ' + $scope.entityRename.type + '. Please try again.', 'error');
             });
     };
 
     function getEntitiesForParent(parent) {
         $http({
-            url: '/api/entities',
+            url: '/api/entity',
             method: 'GET',
             params: {
                 parent: parent

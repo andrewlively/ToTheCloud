@@ -8,8 +8,16 @@ module.exports = function (app, passport) {
     // server routes ===========================================================
     // handle things like api calls
     // authentication routes
+    
+    app.post('/api/:type/rename', isLoggedIn, function (req, res) {
+        EntityBrowser.renameEntity(req.body, function (err) {
+            res.status(err ? 422 : 200).json({
+                status: err ? 'ERROR' : 'SUCCESS'
+            }).end();
+        });
+    });
 
-    app.get('/api/entities', isLoggedIn, function (req, res) {
+    app.get('/api/entity', isLoggedIn, function (req, res) {
         EntityBrowser.getEntitiesForLevel({
             owner: req.user._id,
             parent: req.query.parent
@@ -26,7 +34,15 @@ module.exports = function (app, passport) {
         }, function (err, entity) {
             res.status(err ? 422 : 200).json({
                 entity: entity
-            });
+            }).end();
+        });
+    });
+    
+    app.post('/api/file/rename', isLoggedIn, function (req, res) {
+        EntityBrowser.renameFile(req.body, function (err) {
+            res.status(err ? 422 : 200).json({
+                status: err ? 'ERROR' : 'SUCCESS'
+            }).end();
         });
     });
 

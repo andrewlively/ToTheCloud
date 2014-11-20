@@ -169,3 +169,15 @@ exports.deleteFolderEntity = function (data, callback) {
         callback('Unknown error');
     }
 };
+
+exports.renameEntity = function (data, callback) {
+    try {
+        Entity.findOneAndUpdate({
+            _id: data.id
+        }, {
+            name: data.name
+        }, {}, callback);
+    } catch (ex) {
+        callback('Unknown error');
+    }
+};
