@@ -1,9 +1,9 @@
 module.exports = {
     host: {
-        domain: 'ENTER_DOMAIN_HERE',
+        domain: 'http://cloud.andrewlively.com/',
         port: 1337
     },
     support: {
-        email: 'ENTER_SUPPORT_EMAIL_HERE'
+        email: 'support@andrewlively.com'
     }
 };

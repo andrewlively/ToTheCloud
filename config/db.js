@@ -1,9 +1,9 @@
 module.exports = {
     mongodb: {
-        host: 'mongodb://localhost/cloud'
+        host: 'ENTER_MONGODB_URL_HERE'
     },
     redis: {
-        host: '127.0.0.1',
+        host: 'ENTER_REDIS_URL_HERE',
         port: 6379
     }
 };
