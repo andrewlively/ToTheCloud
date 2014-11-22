@@ -1,3 +1,4 @@
+/*global angular, jQuery */
 var login = angular.module('login', ['oitozero.ngSweetAlert']);
 
 login.controller('LoginController', function ($scope, $http, SweetAlert) {
@@ -20,7 +21,7 @@ login.controller('LoginController', function ($scope, $http, SweetAlert) {
     };
 
     $scope.resetPassword = function () {
-        $scope.post('/api/user/reset-password', $scope.resetPasswordModel)
+        $http.post('/api/user/reset-password', $scope.resetPasswordModel)
             .success(function (data) {
                 SweetAlert.swal('Password Reset Request Successful', data.message, 'success');
                 jQuery('#resetPasswordModal').modal('hide');

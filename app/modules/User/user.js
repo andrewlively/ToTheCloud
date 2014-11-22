@@ -1,6 +1,7 @@
-/*global require, exports, __dirname */
+/*global require, exports, __dirname, console, process */
 var User = require('../../models/user');
 var nodemailer = require('nodemailer');
+var smtpPool = require('nodemailer-smtp-pool');
 var async = require('async');
 var redis = require("redis");
 var resetClient = redis.createClient();
@@ -15,12 +16,18 @@ resetClient.select(1, function (err) {
     }
 });
 
-var transport = nodemailer.createTransport("SMTP", {});
+var transport = nodemailer.createTransport(smtpPool({
+    host: 'localhost',
+    port: 25,
+    maxConnections: 5,
+    maxMessages: 10,
+    ignoreTLS: true
+}));
 
 exports.register = function (data, callback) {
     try {
         var uid = '';
-        
+
         async.series([
 
             function (_callback) {
@@ -72,7 +79,7 @@ exports.register = function (data, callback) {
     }
 };
 
-exports.resetPassword = function (data, callback) {
+exports.createPasswordResetRequest = function (data, callback) {
     try {
         async.waterfall([
 
@@ -110,7 +117,8 @@ exports.resetPassword = function (data, callback) {
 
 
                 // send mail with defined transport object
-                transport.sendMail(mailOptions, function (err) {
+                transport.sendMail(mailOptions, function (err, response) {
+                    console.log(response);
                     _callback(err);
                 });
             }

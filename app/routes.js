@@ -101,7 +101,7 @@ module.exports = function (app, passport) {
     });
 
     app.post('/api/user/reset-password', function (req, res) {
-        User.resetPassword(req.body, function (err) {
+        User.createPasswordResetRequest(req.body, function (err) {
             res.status(err ? 422 : 200).json({
                 message: err ? 'An error occurred. Please try again.' : 'Password request successful. You will recieve an email shortly with further instructions.'
             }).end();
