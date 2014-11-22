@@ -87,5 +87,6 @@ atlassian-ide-plugin.xml
 # Crashlytics plugin (for Android Studio and IntelliJ)
 com_crashlytics_export_strings.xml
 
-# SendGrid config file
+# Config files
 config/sendgrid.js
+config/systemSettings.js
