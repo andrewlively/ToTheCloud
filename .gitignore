@@ -88,5 +88,5 @@ atlassian-ide-plugin.xml
 com_crashlytics_export_strings.xml
 
 # Config files
-config/sendgrid.js
-config/systemSettings.js
+# config/sendgrid.js
+# config/systemSettings.js
